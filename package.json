@@ -1,0 +1,23 @@
+{
+  "name": "wavy-player",
+  "productName": "Wavy",
+  "version": "0.0.0",
+  "description": "Offline music and video player with a wavy seek bar, YouTube and Spotify links, and MP3 downloads",
+  "author": "Wavy",
+  "license": "MIT",
+  "main": "main.js",
+  "scripts": { "start": "electron .", "dist": "electron-builder --win --x64" },
+  "dependencies": { "electron-updater": "^6.3.9" },
+  "devDependencies": { "electron": "^33.2.0", "electron-builder": "^25.1.8" },
+  "build": {
+    "appId": "com.wavy.player",
+    "productName": "Wavy",
+    "directories": { "output": "dist" },
+    "files": ["main.js", "server.js", "preload.js", "app/**/*", "build/icon.png"],
+    "win": { "icon": "build/icon.png", "target": [ { "target": "nsis", "arch": ["x64"] }, { "target": "portable", "arch": ["x64"] } ],
+      "fileAssociations": [ { "ext": ["mp3","flac","wav","m4a","ogg","opus","aac","mp4","webm"], "name": "Media file", "role": "Player" } ] },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "artifactName": "Wavy-Setup-${version}.${ext}" },
+    "portable": { "artifactName": "Wavy-Portable-${version}.${ext}" },
+    "publish": { "provider": "github", "releaseType": "release" }
+  }
+}

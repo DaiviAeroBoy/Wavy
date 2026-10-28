@@ -1,0 +1,31 @@
+name: Release (Windows)
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - name: Version from run number
+        shell: bash
+        run: npm version 1.0.${{ github.run_number }} --no-git-tag-version
+      - name: Build and publish installer and portable exe
+        run: npx electron-builder --win --x64 --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Attach web build
+        shell: pwsh
+        run: |
+          Compress-Archive -Path app/* -DestinationPath Wavy-Web-1.0.${{ github.run_number }}.zip
+          gh release upload "v1.0.${{ github.run_number }}" "Wavy-Web-1.0.${{ github.run_number }}.zip" --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
